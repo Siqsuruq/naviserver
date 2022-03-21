@@ -1,0 +1,32 @@
+FROM ubuntu:20.04
+
+LABEL maintainer="admin@cloudz.cv"
+LABEL version="0.1"
+LABEL description="This is custom Docker Image for Naviserver"
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG NS_HOME=/opt/ns
+
+# General Dependencies
+RUN apt-get -y update && apt-get -y install unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes mc file git gcc zip
+
+# PostgreSQL
+# postgresql postgresql-contrib postgresql-pltcl
+
+
+WORKDIR $NS_HOME/src
+
+
+RUN git clone https://bitbucket.org/naviserver/naviserver.git \
+ 	&& cd $NS_HOME/src/naviserver \
+	&& ./autogen.sh --prefix=$NS_HOME --enable-symbols --enable-threads && make && make install \
+	&& cd $NS_HOME/src && rm -rf naviserver* \
+	
+# RUN wget https://bitbucket.org/naviserver/naviserver/get/master.zip && unzip *zip && cd naviserver-naviserver*
+	# ./autogen.sh --prefix=$ns_dir --enable-symbols --enable-threads --htmldir=$ns_dir/doc
+	# make
+	# make install
+	# useradd nsadmin
+	# chown -R nsadmin:nsadmin $ns_dir/logs
+	# chown -R nsadmin:nsadmin $ns_dir/pages
+WORKDIR $NS_HOME

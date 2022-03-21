@@ -1,0 +1,16 @@
+
+
+
+RUN git clone https://bitbucket.org/naviserver/naviserver.git \
+ 	&& cd $NS_HOME/src/naviserver \
+	&& ./autogen.sh --prefix=$NS_HOME --enable-symbols --enable-threads && make && make install \
+	&& cd $NS_HOME/src && rm -rf naviserver* \
+	
+# RUN wget https://bitbucket.org/naviserver/naviserver/get/master.zip && unzip *zip && cd naviserver-naviserver*
+	# ./autogen.sh --prefix=$ns_dir --enable-symbols --enable-threads --htmldir=$ns_dir/doc
+	# make
+	# make install
+	# useradd nsadmin
+	# chown -R nsadmin:nsadmin $ns_dir/logs
+	# chown -R nsadmin:nsadmin $ns_dir/pages
+WORKDIR $NS_HOME

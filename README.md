@@ -1,3 +1,0 @@
-# naviserver
-
-Naviserver Docker Image

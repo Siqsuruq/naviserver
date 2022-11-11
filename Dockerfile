@@ -107,7 +107,12 @@ RUN git clone https://github.com/aschoepe/ooxml.git ${NS_HOME}/src/ooxml \
 	&& ./configure && make && make install \
 	&& rm -rf ${NS_HOME}/src
 
-
+# Compile and install nsshell
+RUN git clone https://maksym_zinchenko@bitbucket.org/naviserver/nsshell.git ${NS_HOME}/src/nsshell \
+ 	&& cd ${NS_HOME}/src/nsshell \
+	&& make NAVISERVER=$NS_HOME install \
+	&& rm -rf ${NS_HOME}/src
+	
 RUN groupadd nsadmin
 RUN useradd -Ms /bin/bash -g nsadmin nsadmin \
 	&& chown -R nsadmin:nsadmin ${NS_HOME}

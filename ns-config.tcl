@@ -196,6 +196,13 @@ ns_section			"ns/server/${server}/module/nsshell" {
 	ns_param		kernel_timeout		10
 }
 
+ns_section			"ns/server/${server}/module/oodz" {
+	ns_param		oodz				Tcl
+	ns_param		oodz_log_dir		${homedir}/logs
+	ns_param		ssl					1
+	ns_param		api_version			"v2"
+}
+
 ns_section			"ns/server/${server}/module/nsperm" {
 	ns_param		htaccess			true
 	ns_param		passwdfile			/opt/ns/modules/nsperm/passwd
@@ -220,7 +227,7 @@ ns_section			"ns/server/default/module/dz" {
 #ns_logctl severity Debug(ns:driver) on
 #ns_logctl severity Debug(request) on
 #ns_logctl severity Debug(task) on
-#ns_logctl severity Debug(sql) on
+ns_logctl severity Debug(sql) on
 #ns_logctl severity Debug(nsset) on
 
 

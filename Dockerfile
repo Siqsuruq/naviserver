@@ -91,7 +91,7 @@ RUN git clone https://github.com/flightaware/tclcurl-fa.git ${NS_HOME}/src/tclcu
 	&& ./configure --enable-threads && make && make install \
 	&& rm -rf ${NS_HOME}/src
 	
-# Compile and install tclcurl
+# Compile and install vfs
 RUN wget --no-check-certificate https://core.tcl-lang.org/tclvfs/zip/72e30db4a7/tclvfs-72e30db4a7.zip -P ${NS_HOME}/src/vfs/ \
  	&& cd ${NS_HOME}/src/vfs \
 	&& unzip tclvfs*.zip  \
@@ -113,6 +113,18 @@ RUN git clone https://maksym_zinchenko@bitbucket.org/naviserver/nsshell.git ${NS
 	&& make NAVISERVER=$NS_HOME install \
 	&& rm -rf ${NS_HOME}/src
 	
+# Compile and install revproxy
+RUN git clone https://bitbucket.org/naviserver/revproxy.git ${NS_HOME}/src/revproxy \
+ 	&& cd ${NS_HOME}/src/revproxy \
+	&& make NAVISERVER=$NS_HOME install \
+	&& rm -rf ${NS_HOME}/src
+
+# Compile and install nsstats
+RUN git clone https://bitbucket.org/naviserver/nsstats.git ${NS_HOME}/src/nsstats \
+ 	&& cd ${NS_HOME}/src/nsstats \
+	&& make NAVISERVER=$NS_HOME install \
+	&& rm -rf ${NS_HOME}/src
+
 RUN groupadd nsadmin
 RUN useradd -Ms /bin/bash -g nsadmin nsadmin \
 	&& chown -R nsadmin:nsadmin ${NS_HOME}

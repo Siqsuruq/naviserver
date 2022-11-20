@@ -3,13 +3,13 @@
 ########################################################################
 
 set			server						default
-set			server_desc					"My First NaviServer Instance"
+set			server_desc					"My NaviServer Instance"
 
 set			db_host						192.168.199.15
 set			db_port						5432
 set			db_user						postgres
 set			db_pass						123
-set			db_name						"dev"
+set			db_name						${server}
 
 set			homedir						[file dirname [file dirname [info nameofexecutable]]]
 set			bindir						${homedir}/bin
@@ -18,7 +18,7 @@ set			hostname					[ns_info hostname]
 
 set			max_file_upload_mb			50
 set			max_file_upload_min			5
-set			port						8000
+set			port						80
 set			ssl_port					443
 set			ip_addr						0.0.0.0
 set			ipv6_addr					::1
@@ -61,7 +61,7 @@ ns_section			"ns/threads" {
 ns_section			"ns/fastpath" {
 	ns_param			gzip_static				true       ;# check for static gzip; default: false
 	ns_param			gzip_refresh			true       ;# refresh stale .gz files on the fly using ::ns_gzipfile
-	ns_param			gzip_cmd				"/usr/bin/gzip -9"  ;# use for re-compressing
+	ns_param			gzip_cmd				"/bin/gzip -9"  ;# use for re-compressing
 	ns_param			brotli_static			true       ;# check for static brotli files; default: false
 	ns_param			brotli_refresh			true       ;# refresh stale .br files on the fly using ::ns_brotlifile
 	ns_param			brotli_cmd				"/usr/bin/brotli -f -Z"  ;# use for re-compressing
@@ -88,7 +88,7 @@ ns_section			"ns/module/nsssl" {
 	ns_param			port						$ssl_port
 	ns_param			hostname					$hostname
 	ns_param			defaultserver				${server}
-	ns_param			certificate					${homedir}/modules/nsssl/daidze.pem
+	ns_param			certificate					${homedir}/modules/nsssl/${server}.pem
 	ns_param			ciphers						"ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!RC4"
 	ns_param			protocols					"!SSLv2:!SSLv3"
 	ns_param			verify						0
@@ -143,8 +143,6 @@ ns_section			"ns/server/${server}/modules" {
 	ns_param		nsfortune			${bindir}/nsfortune.so
 	ns_param		nsperm				${bindir}/nsperm.so
 	ns_param		nsshell				tcl
-	ns_param		dz					tcl
-	ns_param		oodz				tcl 
 }
 
 # Tcl Configuration
@@ -196,13 +194,6 @@ ns_section			"ns/server/${server}/module/nsshell" {
 	ns_param		kernel_timeout		10
 }
 
-ns_section			"ns/server/${server}/module/oodz" {
-	ns_param		oodz				Tcl
-	ns_param		oodz_log_dir		${homedir}/logs
-	ns_param		ssl					1
-	ns_param		api_version			"v2"
-}
-
 ns_section			"ns/server/${server}/module/nsperm" {
 	ns_param		htaccess			true
 	ns_param		passwdfile			/opt/ns/modules/nsperm/passwd
@@ -215,11 +206,6 @@ ns_section ns/server/default/module/nscp/users {
 set ::env(RANDFILE) ${homedir}/.rnd
 set ::env(HOME) ${homedir}
 set ::env(LANG) en_US.UTF-8
-
-
-ns_section			"ns/server/default/module/dz" {
-	ns_param		dz				Tcl
-}
 
 #
 # For debugging, you might activate one of the following flags
@@ -246,7 +232,7 @@ ns_section			"ns/db/pool/${server}pool1" {
 	ns_param			datasource				${db_host}:${db_port}:${db_name}
 	ns_param			user					${db_user}
 	ns_param			password				${db_pass}
-	ns_param			connections				5
+	ns_param			connections				10
 }
 
 ns_section			"ns/server/${server}/db" {

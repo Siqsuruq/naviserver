@@ -151,13 +151,10 @@ ns_section			"ns/server/${server}/module/nsshell" {
 
 ns_section			"ns/server/${server}/module/revproxy" {
 	ns_param filters {
-		ns_register_filter postauth GET  /shiny/* ::revproxy::upstream -target http://172.17.0.2:80 -regsubs {{/shiny ""}}
-		ns_register_filter postauth POST /shiny/* ::revproxy::upstream -target http://172.17.0.2:80
-		ns_register_filter postauth GET  /dirty/* ::revproxy::upstream -target http://172.17.0.3:80 -regsubs {{/dirty ""}}
-		ns_register_filter postauth POST /dirty/* ::revproxy::upstream -target http://172.17.0.3:80
-		ns_register_filter postauth GET  /d/* ::revproxy::upstream -target http://172.17.0.5:80 -regsubs {{/d ""}}
-		ns_register_filter postauth POST /d/* ::revproxy::upstream -target http://172.17.0.5:80	
-	
+		ns_register_filter postauth GET  /portainer/* ::revproxy::upstream -target http://172.17.0.2:9443 -regsubs {{/portainer ""}}
+		ns_register_filter postauth POST /portainer/* ::revproxy::upstream -target http://172.17.0.2:9443
+		ns_register_filter postauth DELETE  /portainer/* ::revproxy::upstream -target http://172.17.0.3:9443 -regsubs {{/dirty ""}}
+		ns_register_filter postauth PUT /portainer/* ::revproxy::upstream -target http://172.17.0.3:9443
 	}
 }
 

@@ -151,10 +151,15 @@ ns_section			"ns/server/${server}/module/nsshell" {
 
 ns_section			"ns/server/${server}/module/revproxy" {
 	ns_param filters {
-		ns_register_filter postauth GET  /portainer/* ::revproxy::upstream -target http://172.17.0.2:9443 -regsubs {{/portainer ""}}
-		ns_register_filter postauth POST /portainer/* ::revproxy::upstream -target http://172.17.0.2:9443
-		ns_register_filter postauth DELETE  /portainer/* ::revproxy::upstream -target http://172.17.0.3:9443 -regsubs {{/dirty ""}}
-		ns_register_filter postauth PUT /portainer/* ::revproxy::upstream -target http://172.17.0.3:9443
+		ns_register_filter preauth GET  /ns1/* ::revproxy::upstream -target http://172.17.0.3 -regsubs {{/ns1 ""}}
+		ns_register_filter preauth POST /ns1/* ::revproxy::upstream -target http://172.17.0.3 -regsubs {{/ns1 ""}}
+		ns_register_filter preauth DELETE /ns1/* ::revproxy::upstream -target http://172.17.0.3 -regsubs {{/ns1 ""}}
+		ns_register_filter preauth PUT /ns1/* ::revproxy::upstream -target http://172.17.0.3 -regsubs {{/ns1 ""}}
+		
+		ns_register_filter preauth GET  /ns2/* ::revproxy::upstream -target http://172.17.0.4 -regsubs {{/ns2 ""}}
+		ns_register_filter preauth POST /ns2/* ::revproxy::upstream -target http://172.17.0.4 -regsubs {{/ns2 ""}}
+		ns_register_filter preauth DELETE /ns2/* ::revproxy::upstream -target http://172.17.0.4 -regsubs {{/ns2 ""}}
+		ns_register_filter preauth PUT /ns2/* ::revproxy::upstream -target http://172.17.0.4 -regsubs {{/ns2 ""}}
 	}
 }
 

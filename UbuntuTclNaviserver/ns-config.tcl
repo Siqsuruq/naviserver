@@ -141,7 +141,6 @@ ns_section			"ns/server/${server}/modules" {
 	ns_param		nsdb				${bindir}/nsdb.so
 	ns_param		nslog				${bindir}/nslog.so
 	ns_param		nsfortune			${bindir}/nsfortune.so
-	ns_param		nsperm				${bindir}/nsperm.so
 	ns_param		nsshell				tcl
 }
 
@@ -192,11 +191,6 @@ ns_section			"ns/server/${server}/module/nsshell" {
 	ns_param		url					/nsshell
 	ns_param		kernel_heartbeat	5
 	ns_param		kernel_timeout		10
-}
-
-ns_section			"ns/server/${server}/module/nsperm" {
-	ns_param		htaccess			true
-	ns_param		passwdfile			/opt/ns/modules/nsperm/passwd
 }
 
 ns_section ns/server/default/module/nscp/users {

@@ -15,7 +15,7 @@ ARG TCL_LIB=/usr/share/tcltk
 RUN export LANG="en_US.UTF-8" \
 	&& export LC_ALL="en_US.UTF-8" \
 	&& apt-get -y update \
-	&& apt-get -y --no-install-recommends install locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli \
+	&& apt-get -y --no-install-recommends install locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli \
 	&& locale-gen en_US.UTF-8 \
 	&& update-locale LANG="en_US.UTF-8" \
 	&& update-locale LC_ALL="en_US.UTF-8" \

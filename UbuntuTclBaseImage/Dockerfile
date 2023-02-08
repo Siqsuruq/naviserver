@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 LABEL maintainer="admin@cloudz.cv"
-LABEL version="0.1"
+LABEL version="0.2"
 LABEL description="This is custom Docker Image for Ubuntu and Tcl"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -15,7 +15,7 @@ ARG TCL_LIB=/usr/share/tcltk
 RUN export LANG="en_US.UTF-8" \
 	&& export LC_ALL="en_US.UTF-8" \
 	&& apt-get -y update \
-	&& apt-get -y --no-install-recommends install locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli \
+	&& apt-get -y --no-install-recommends install locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli libxml2-utils \
 	&& locale-gen en_US.UTF-8 \
 	&& update-locale LANG="en_US.UTF-8" \
 	&& update-locale LC_ALL="en_US.UTF-8" \

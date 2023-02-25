@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 LABEL maintainer="admin@cloudz.cv"
-LABEL version="0.2"
+LABEL version="0.3"
 LABEL description="This is custom Docker Image for Ubuntu and Tcl"
 
 ARG DEBIAN_FRONTEND=noninteractive

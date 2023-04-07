@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 LABEL maintainer="admin@cloudz.cv"
-LABEL version="0.3"
+LABEL version="0.4"
 LABEL description="This is custom Docker Image for Ubuntu and Tcl"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -10,12 +10,13 @@ ARG TCL_BUILD_HOME=/opt/tcl_build
 ARG PG_INCL=/usr/include/postgresql
 ARG PG_LIB=/usr/lib
 ARG TCL_LIB=/usr/share/tcltk
+ARG S6_OVERLAY_VERSION=3.1.4.1
 
 # General Dependencies
 RUN export LANG="en_US.UTF-8" \
 	&& export LC_ALL="en_US.UTF-8" \
 	&& apt-get -y update \
-	&& apt-get -y --no-install-recommends install locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli libxml2-utils \
+	&& apt-get -y --no-install-recommends install locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli libxml2-utils curl ca-certificates gnupg2 lsb-release xz-utils \
 	&& locale-gen en_US.UTF-8 \
 	&& update-locale LANG="en_US.UTF-8" \
 	&& update-locale LC_ALL="en_US.UTF-8" \
@@ -73,6 +74,13 @@ RUN export LANG="en_US.UTF-8" \
  	&& cd ${TCL_BUILD_HOME}/src/ooxml \
 	&& ./configure && make && make install \
 	&& rm -rf ${TCL_BUILD_HOME}/src \
-	&& cd ${TCL_BUILD_HOME}
+	&& echo "----------------------------------------------" 
+
+# S6 Overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
 
 WORKDIR $TCL_BUILD_HOME
+ENTRYPOINT ["/init"]

@@ -2,25 +2,25 @@
 # Sample configuration file for NaviServer
 ########################################################################
 
-set			server						default
-set			server_desc					"My NaviServer Instance"
+set			server						[ns_info hostname]
+set			server_desc					"NaviServer: ${server}"
 
-set			db_host						192.168.199.15
+set			db_host						$::env(DB_HOST_IP) ;# Mother host IP or where Postgres is running (hostname -I), passed in env variable
 set			db_port						5432
 set			db_user						postgres
-set			db_pass						123
-set			db_name						${server}
+set			db_pass						"123"
+set			db_name						$::env(DB_NAME)
 
 set			homedir						[file dirname [file dirname [info nameofexecutable]]]
 set			bindir						${homedir}/bin
-set			pageroot					${homedir}/pages
+set			pageroot					${homedir}/client/pages
 set			hostname					[ns_info hostname]
 
 set			max_file_upload_mb			50
 set			max_file_upload_min			5
 set			port						80
 set			ssl_port					443
-set			ip_addr						0.0.0.0
+set			ip_addr						[ns_info address]
 set			ipv6_addr					::1
 
 
@@ -88,7 +88,7 @@ ns_section			"ns/module/nsssl" {
 	ns_param			port						$ssl_port
 	ns_param			hostname					$hostname
 	ns_param			defaultserver				${server}
-	ns_param			certificate					${homedir}/modules/nsssl/${server}.pem
+	ns_param			certificate					${homedir}/modules/nsssl/ns.pem
 	ns_param			ciphers						"ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!RC4"
 	ns_param			protocols					"!SSLv2:!SSLv3"
 	ns_param			verify						0

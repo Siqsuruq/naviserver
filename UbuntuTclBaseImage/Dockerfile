@@ -1,5 +1,5 @@
 # Base Image Ubuntu with Tcl, used as base to create other images
-FROM ubuntu:22.04
+FROM ubuntu:jammy
 
 LABEL maintainer="admin@cloudz.cv"
 LABEL version="0.4"

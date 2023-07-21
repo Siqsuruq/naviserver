@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Please set up name for container, hostname and ports
-CTRN=test
-HOSTNAME=test.mydomain.org
-SPORT=7001
-NPORT=7002
+CTRN=nexttcl
+HOSTNAME=nexttcl.daidze.org
+SPORT=7003
+NPORT=7004
 echo "############################################"
 echo "Setting up container: $CTRN"
 
@@ -12,6 +12,8 @@ echo "Setting up container: $CTRN"
 docker run --name=${CTRN} \
 	-e DB_HOST_IP=$(hostname -I | cut -f1 -d' ') \
 	-e DB_NAME=${CTRN} \
+	--net cloudznet \
+	--ip 192.168.0.16 \
 	--hostname=${HOSTNAME} \
 	-p ${SPORT}:443 \
 	-p ${NPORT}:80 \

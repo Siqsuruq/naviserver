@@ -6,9 +6,9 @@ set			server						[ns_info hostname]
 set			server_desc					"NaviServer: ${server}"
 
 set			db_host						$::env(DB_HOST_IP) ;# Mother host IP or where Postgres is running (hostname -I), passed in env variable
-set			db_port						5432
-set			db_user						postgres
-set			db_pass						"123"
+set			db_port						$::env(DB_PORT)
+set			db_user						$::env(DB_USER)
+set			db_pass						$::env(DB_PASS)
 set			db_name						$::env(DB_NAME)
 
 set			homedir						[file dirname [file dirname [info nameofexecutable]]]
@@ -110,11 +110,11 @@ ns_section			"ns/servers" {
 }
 
 ns_section			"ns/module/nssock/servers" {
-	ns_param			${server}					localhost
+	ns_param			${server}					${server}
 }
 
 ns_section			"ns/module/nsssl/servers" {
-	ns_param			${server}					localhost
+	ns_param			${server}					${server}
 }
 
 

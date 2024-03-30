@@ -55,6 +55,7 @@ ARG TCL_BUILD_HOME=/opt/tcl_build
 ARG PG_INCL=/usr/include/postgresql
 ARG PG_LIB=/usr/lib
 ARG TCL_LIB=/usr/share/tcltk
+ARG WORKDIR=/opt/tcltk
 
 # Copy built Tcl packages from the builder stage
 COPY --from=builder ${TCL_BUILD_HOME} ${TCL_BUILD_HOME}
@@ -82,7 +83,7 @@ RUN cd ${TCL_BUILD_HOME}/src/pgtcl && make install \
 RUN rm -rf ${TCL_BUILD_HOME}/src
 
 # Set working directory
-WORKDIR ${TCL_BUILD_HOME}
+WORKDIR ${WORKDIR}
 
 # Entrypoint
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["tclsh"]

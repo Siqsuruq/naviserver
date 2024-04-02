@@ -8,14 +8,11 @@ ARG PG_LIB=/usr/lib
 ARG TCL_LIB=/usr/share/tcltk
 
 # Install build dependencies
-RUN export LANG="en_US.UTF-8" \
-    && export LC_ALL="en_US.UTF-8" \
-    && apt-get update \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli libxml2-utils curl ca-certificates gnupg2 lsb-release xz-utils \
-    && locale-gen en_US.UTF-8 \
-    && update-locale LANG="en_US.UTF-8" \
-    && update-locale LC_ALL="en_US.UTF-8" \
-    && apt-get clean \
+	&& locale-gen C.UTF-8 \
+	&& update-locale LANG=C.UTF-8 \
+	&& apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
     && git config --global http.sslverify false \
@@ -56,14 +53,17 @@ ARG PG_INCL=/usr/include/postgresql
 ARG PG_LIB=/usr/lib
 ARG TCL_LIB=/usr/share/tcltk
 ARG WORKDIR=/opt/tcltk
+ENV LC_ALL=C.UTF-8
 
 # Copy built Tcl packages from the builder stage
 COPY --from=builder ${TCL_BUILD_HOME} ${TCL_BUILD_HOME}
 
 # Install runtime dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev nsf nsf-shells fortune fortunes imagemagick file zip libcurl4-openssl-dev brotli libxml2-utils gnupg2 make \
-    && apt-get clean \
+    && apt-get install -y --no-install-recommends locales tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev nsf nsf-shells fortune fortunes imagemagick file zip libcurl4-openssl-dev brotli libxml2-utils gnupg2 make \
+	&& locale-gen C.UTF-8 \
+	&& update-locale LANG=C.UTF-8 \
+	&& apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* 
 

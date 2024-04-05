@@ -90,11 +90,16 @@ sudo chmod -R 750 /opt/myns
 ```
 
 
-## Example of run.sh and directory structure:
+####  Final example of run.sh and directory structure:
+So in the end you will end up with folders structure like that:
 
+```
 /opt/myns/logs
 /opt/myns/pages/index.html
 /opt/myns/modules/nsssl/mydomain.com.pem
+```
+
+And run.sh script like that:
 
 ```
 #!/bin/bash
@@ -131,4 +136,15 @@ docker run --name=${CTNR} \
 	--runtime=runc \
 	--detach=true naviserver:latest
 ```
+## Step 3: Preparing the Environment Before Running the Container.
 
+Make the run.sh script executable and run it: 
+
+```
+chmod a+x run.sh
+./run.sh
+```
+
+## Customizing Naviserver Configuration.
+
+For advanced users requiring specific configurations beyond the default setup, you can modify ns-config.tcl file. This file is the primary configuration script for Naviserver Docker Image. Refer to the Official Naviserver documentation for detailed information on the available settings and their implications.

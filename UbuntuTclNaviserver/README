@@ -1,8 +1,0 @@
-To run the container, follow these steps:
-    1) Make the build.sh script executable by running the command: chmod a+x build.sh. This grants execute permissions to the script file.
-    2) Similarly, make the run.sh script executable by running: chmod a+x run.sh. This step allows you to run the script later.
-    3) Execute the build.sh script by running: ./build.sh. This script is responsible for building the container image based on the provided configuration.
-    4) Open the run.sh file in a text editor and modify the container's name, ports, domain, or any other configuration parameters as needed. However, avoid modifying the volume settings since the specified folders must exist on your host machine if you want to use SSL, keep logs.
-    Run the container by executing the run.sh script: ./run.sh. This script starts the container based on the built image and the configuration specified in the run.sh file.
-
-By following these steps, you can build the container image and start the container based on the provided configuration. Make sure to review and adjust the configuration files to match your specific requirements before running the scripts.

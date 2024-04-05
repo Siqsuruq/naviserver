@@ -5,6 +5,14 @@
 set			server						[ns_info hostname]
 set			server_desc					"NaviServer: ${server}"
 
+set parts [split $server "."]
+# Check if there are at least two parts to avoid errors
+if {[llength $parts] >= 2} {
+	set cert_file [join [lrange $parts end-1 end] "."]
+} else {
+	set cert_file $server  ;# Fallback to the original server if it doesn't have two parts
+}
+
 set			db_host						$::env(DB_HOST_IP) ;# Mother host IP or where Postgres is running (hostname -I), passed in env variable
 set			db_port						$::env(DB_PORT)
 set			db_user						$::env(DB_USER)
@@ -13,8 +21,9 @@ set			db_name						$::env(DB_NAME)
 
 set			homedir						[file dirname [file dirname [info nameofexecutable]]]
 set			bindir						${homedir}/bin
-set			pageroot					${homedir}/client/pages
+set			pageroot					${homedir}/pages
 set			hostname					[ns_info hostname]
+set			logdir						${homedir}/logs
 
 set			max_file_upload_mb			50
 set			max_file_upload_min			5
@@ -35,7 +44,7 @@ ns_section			"ns/modules" {
 ns_section			"ns/parameters" {
 	ns_param			home					${homedir}
 	ns_param			tcllibrary				tcl
-	ns_param			serverlog				${homedir}/logs/error.log
+	ns_param			serverlog				${logdir}/error.log
 	ns_param			formfallbackcharset		iso8859-1 
 	ns_param			logusec					false
 	ns_param			logusecdiff				false
@@ -88,9 +97,9 @@ ns_section			"ns/module/nsssl" {
 	ns_param			port						$ssl_port
 	ns_param			hostname					$hostname
 	ns_param			defaultserver				${server}
-	ns_param			certificate					${homedir}/modules/nsssl/ns.pem
-	ns_param			ciphers						"ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!RC4"
-	ns_param			protocols					"!SSLv2:!SSLv3"
+	ns_param			certificate					${homedir}/modules/nsssl/${cert_file}.pem
+	ns_param			ciphers						"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305"
+	ns_param			protocols					"!SSLv2:!SSLv3:!TLSv1.0:!TLSv1.1"
 	ns_param			verify						0
 	ns_param			extraheaders {
 				Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -102,6 +111,12 @@ ns_section			"ns/module/nsssl" {
 	ns_param			writerthreads				1
     ns_param			writersize					4kB
     ns_param			writerstreaming				true
+}
+
+ns_section			"ns/module/nsstats" {
+	ns_param			enabled						1
+	ns_param			user						"nsadmin"
+	ns_param			password					"Pa5sw0rd."
 }
 
 # Map headers to server-name
@@ -131,7 +146,7 @@ ns_section			"ns/server/${server}" {
 	ns_param		enabletclpages		true  ;# default: false
 	ns_param		checkmodifiedsince	false ;# default: true, check modified-since before returning files from cache. Disable for speedup
 	ns_param		connsperthread		1000  ;# default: 0; number of connections (requests) handled per thread
-	ns_param		minthreads			5     ;# default: 1; minimal number of connection threads
+	ns_param		minthreads			3     ;# default: 1; minimal number of connection threads
 	ns_param		maxthreads			100   ;# default: 10; maximal number of connection threads
 	ns_param		rejectoverrun		true  ;# default: false; send 503 when thread pool queue overruns
 }
@@ -168,7 +183,7 @@ ns_section			"ns/server/${server}/adp" {
 
 ns_section			"ns/server/${server}/adp/parsers" {
 	ns_param		fancy				".adp"
-	ns_param		enabledebug			true;
+	ns_param		enabledebug			true
 }
 
 # Access log -- nslog
@@ -181,7 +196,7 @@ ns_section			"ns/server/${server}/module/nslog" {
 	ns_param		maskipv6			ff:ff:ff:ff::
 }
 
-ns_section			"ns/server/default/module/nsfortune" {
+ns_section			"ns/server/${server}/module/nsfortune" {
 	ns_param path /usr/share/games/fortunes 
 	ns_param line_count 0 
 	ns_param text_load 0
@@ -193,7 +208,7 @@ ns_section			"ns/server/${server}/module/nsshell" {
 	ns_param		kernel_timeout		10
 }
 
-ns_section ns/server/default/module/nscp/users {
+ns_section ns/server/${server}/module/nscp/users {
     ns_param user "::"
 }
 
@@ -207,7 +222,7 @@ set ::env(LANG) en_US.UTF-8
 #ns_logctl severity Debug(ns:driver) on
 #ns_logctl severity Debug(request) on
 #ns_logctl severity Debug(task) on
-ns_logctl severity Debug(sql) on
+#ns_logctl severity Debug(sql) on
 #ns_logctl severity Debug(nsset) on
 
 

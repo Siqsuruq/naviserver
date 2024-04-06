@@ -12,7 +12,7 @@ This Docker image provides a lightweight, Alpine-based environment equipped with
 
 ### Installing
 
-You can build the image yourself or pull it from Docker Hub.
+You can build the image yourself or pull it from [Docker Hub](https://hub.docker.com/r/siqsuruq/tcl/tags).
 
 #### Building the Image
 
@@ -26,7 +26,7 @@ This script will execute the necessary Docker build commands to create the image
 
 #### Pulling from Docker Hub
 
-If the image is available on Docker Hub, you can pull it using:
+If the image is available on [Docker Hub](https://hub.docker.com/r/siqsuruq/tcl/tags), you can pull it using:
 
 ```
 docker pull siqsuruq/tcl:tcl-alpine

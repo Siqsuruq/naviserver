@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build --pull --no-cache -t alpine-tcl .
+docker build --pull --no-cache -t tcl-alpine .

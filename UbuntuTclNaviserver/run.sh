@@ -30,4 +30,4 @@ docker run --name=${CTNR} \
 	--workdir=/opt/ns \
 	--restart=always \
 	--runtime=runc \
-	--detach=true naviserver:latest
+	--detach=true siqsuruq/naviserver:latest

@@ -11,6 +11,7 @@ At this point image brings:
 - tls 1.8.0
 - nsf 2.4.0
 - tzint 1.1.0
+- TclCurl 7.22.0
 
 ### Prerequisites
 

@@ -7,7 +7,7 @@ ARG PG_INCL=/usr/include/postgresql
 ARG PG_LIB=/usr/lib
 
 # Install dependencies, download and install Tcl, and clean up in a single RUN command to reduce layers
-RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip git libpng-dev \
+RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip git libpng-dev curl curl-dev \
     && wget https://sourceforge.net/projects/tcl/files/Tcl/8.6.14/tcl8614-src.zip -O tcl.zip \
     && mkdir -p ${TCL_BUILD_HOME}/tcl \
     && unzip tcl.zip -d ${TCL_BUILD_HOME}/tcl \
@@ -33,6 +33,12 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
     && cd ${TCL_BUILD_HOME}/pgtcl/Pgtcl-3.0.1/ \
 	&& autoreconf \
     && ./configure && make \
+	&& make install \
+	&& wget https://github.com/flightaware/tclcurl-fa/archive/refs/tags/v7.22.0.zip -O v7.22.0.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/tclcurl \
+    && unzip v7.22.0.zip -d ${TCL_BUILD_HOME}/tclcurl \
+    && cd ${TCL_BUILD_HOME}/tclcurl/tclcurl-fa-7.22.0/ \
+    && ./configure --enable-64bit && make \
 	&& make install \
 	&& wget https://core.tcl-lang.org/tcltls/zip/89a6207a57/tcltls-89a6207a57.zip -O tcltls-1.8.0.zip \
 	&& mkdir -p ${TCL_BUILD_HOME}/tcltls \
@@ -73,7 +79,7 @@ COPY --from=builder /usr/local /usr/local
 
 # Install necessary runtime dependencies and perform clean-up in a single RUN command
 # Instlling Tcl-tls because fossil version has broken build
-RUN apk add --no-cache bash musl libpq openssl zlib libpng \
+RUN apk add --no-cache bash musl libpq openssl zlib libpng curl \
     && rm -rf /var/cache/apk/*
 
 # Set the default command to execute when creating a new container

@@ -7,7 +7,7 @@ ARG PG_INCL=/usr/include/postgresql
 ARG PG_LIB=/usr/lib
 
 # Install dependencies, download and install Tcl, and clean up in a single RUN command to reduce layers
-RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip \
+RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip git libpng-dev \
     && wget https://sourceforge.net/projects/tcl/files/Tcl/8.6.14/tcl8614-src.zip -O tcl.zip \
     && mkdir -p ${TCL_BUILD_HOME}/tcl \
     && unzip tcl.zip -d ${TCL_BUILD_HOME}/tcl \
@@ -34,18 +34,22 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
 	&& autoreconf \
     && ./configure && make \
 	&& make install \
-	&& wget https://core.tcl-lang.org/tcltls/uv/tcltls-1.7.22.tar.gz -O tcltls-1.7.22.tar.gz \
+	&& wget https://core.tcl-lang.org/tcltls/zip/89a6207a57/tcltls-89a6207a57.zip -O tcltls-1.8.0.zip \
 	&& mkdir -p ${TCL_BUILD_HOME}/tcltls \
-	&& tar -xzf tcltls-1.7.22.tar.gz -C ${TCL_BUILD_HOME}/tcltls \
-    && cd ${TCL_BUILD_HOME}/tcltls/tcltls-1.7.22/ \
-    && ./configure && make \
-	&& make install \
+	&& unzip tcltls-1.8.0.zip -d ${TCL_BUILD_HOME}/tcltls \
+    && cd ${TCL_BUILD_HOME}/tcltls/tcltls-89a6207a57/ \
+    && ./configure  --enable-64bit && make \
+	&& make install-binaries install-libraries \
 	&& wget https://github.com/nm-wu/nsf/archive/refs/tags/2.4.0.zip -O nsf.zip \
 	&& mkdir -p ${TCL_BUILD_HOME}/nsf \
     && unzip nsf.zip -d ${TCL_BUILD_HOME}/nsf \
     && cd ${TCL_BUILD_HOME}/nsf/nsf-2.4.0/ \
     && ./configure --enable-64bit --enable-threads && make \
 	&& make install \
+	&& git clone https://github.com/aschoepe/tzint.git ${TCL_BUILD_HOME}/src/tzint \
+ 	&& cd ${TCL_BUILD_HOME}/src/tzint \
+	&& ./configure --enable-64bit && make \
+	&& make install-binaries install-libraries \
     && cd / \
     && rm -rf ${TCL_BUILD_HOME} tcl.zip /var/cache/apk/*
 
@@ -69,7 +73,7 @@ COPY --from=builder /usr/local /usr/local
 
 # Install necessary runtime dependencies and perform clean-up in a single RUN command
 # Instlling Tcl-tls because fossil version has broken build
-RUN apk add --no-cache bash musl libpq openssl zlib tcl-tls\
+RUN apk add --no-cache bash musl libpq openssl zlib libpng \
     && rm -rf /var/cache/apk/*
 
 # Set the default command to execute when creating a new container

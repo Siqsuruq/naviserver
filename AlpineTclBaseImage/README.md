@@ -5,6 +5,8 @@ This Docker image provides a lightweight, Alpine-based environment equipped with
 - tcl 8.6.14 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
 - tcllib 1.21 [list of packages included](https://core.tcl-lang.org/tcllib/doc/tcllib-1-21/embedded/md/toc.md)
 
+Size of this image is around: 38.3 MB
+
 ### Prerequisites
 
 - Docker installed on your machine.

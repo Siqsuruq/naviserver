@@ -13,6 +13,11 @@ At this point image brings:
 - tzint 1.1.0
 - TclCurl 7.22.0
 - vfs 1.4.2
+- ooxml 1.6.1
+- money 1.0.1
+- mimext 1.0.0
+- hrfilesize 1.0.0
+- nats 3.0
 
 ### Prerequisites
 

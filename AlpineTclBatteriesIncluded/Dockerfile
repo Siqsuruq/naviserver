@@ -3,8 +3,7 @@
 FROM alpine:latest AS builder
 
 ARG TCL_BUILD_HOME=/opt/tcl_build
-ARG PG_INCL=/usr/include/postgresql
-ARG PG_LIB=/usr/lib
+ARG TCL_LIB=/usr/local/lib
 
 # Install dependencies, download and install Tcl, and clean up in a single RUN command to reduce layers
 RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip git libpng-dev curl curl-dev \
@@ -65,6 +64,19 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
 	&& mv ${TCL_BUILD_HOME}/src/vfs/tclconfig/TEA*/* ${TCL_BUILD_HOME}/src/vfs/tclconfig/ \
 	&& cd ${TCL_BUILD_HOME}/src/vfs \
 	&& ./configure && make && make install \
+	&& git clone https://github.com/aschoepe/ooxml.git ${TCL_BUILD_HOME}/src/ooxml \
+ 	&& cd ${TCL_BUILD_HOME}/src/ooxml \
+	&& ./configure && make && make install \
+	&& git clone https://github.com/Siqsuruq/money-tcl-package.git ${TCL_BUILD_HOME}/src/money \
+	&& cp -r ${TCL_BUILD_HOME}/src/money/money $TCL_LIB/ \
+	&& git clone https://github.com/Siqsuruq/mimext.git ${TCL_BUILD_HOME}/src/mimext \
+	&& cp -r ${TCL_BUILD_HOME}/src/mimext $TCL_LIB/ \
+	&& git clone https://github.com/Siqsuruq/hrfilesize.git ${TCL_BUILD_HOME}/src/hrfilesize \
+	&& cp -r ${TCL_BUILD_HOME}/src/hrfilesize $TCL_LIB/ \
+	&& wget https://github.com/Kazmirchuk/nats-tcl/archive/refs/tags/v3.0.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/nats \
+	&& unzip v3.0.zip -d ${TCL_BUILD_HOME}/nats \
+	&& cp -r ${TCL_BUILD_HOME}/nats/nats-tcl-3.0 $TCL_LIB/ \
     && cd / \
     && rm -rf ${TCL_BUILD_HOME} tcl.zip /var/cache/apk/*
 

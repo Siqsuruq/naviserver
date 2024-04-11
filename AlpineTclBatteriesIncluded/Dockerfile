@@ -56,6 +56,15 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
  	&& cd ${TCL_BUILD_HOME}/src/tzint \
 	&& ./configure --enable-64bit && make \
 	&& make install-binaries install-libraries \
+	&& wget --no-check-certificate https://core.tcl-lang.org/tclvfs/zip/72e30db4a7/tclvfs-72e30db4a7.zip -O tclvfs-72e30db4a7.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/src/vfs/ \
+	&& unzip tclvfs-72e30db4a7.zip -d ${TCL_BUILD_HOME}/src/vfs \
+	&& mv ${TCL_BUILD_HOME}/src/vfs/tclvfs-72e30db4a7/* ${TCL_BUILD_HOME}/src/vfs/ \
+	&& wget --no-check-certificate https://core.tcl-lang.org/tclconfig/zip/2a8174cc0c/TEA+%28tclconfig%29+Source+Code-2a8174cc0c.zip -P ${TCL_BUILD_HOME}/src/vfs/ -O ${TCL_BUILD_HOME}/src/vfs/tclconfig.zip \
+	&& unzip ${TCL_BUILD_HOME}/src/vfs/tclconfig.zip -d ${TCL_BUILD_HOME}/src/vfs/tclconfig \
+	&& mv ${TCL_BUILD_HOME}/src/vfs/tclconfig/TEA*/* ${TCL_BUILD_HOME}/src/vfs/tclconfig/ \
+	&& cd ${TCL_BUILD_HOME}/src/vfs \
+	&& ./configure && make && make install \
     && cd / \
     && rm -rf ${TCL_BUILD_HOME} tcl.zip /var/cache/apk/*
 

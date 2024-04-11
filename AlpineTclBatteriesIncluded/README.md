@@ -12,6 +12,7 @@ At this point image brings:
 - nsf 2.4.0
 - tzint 1.1.0
 - TclCurl 7.22.0
+- vfs 1.4.2
 
 ### Prerequisites
 

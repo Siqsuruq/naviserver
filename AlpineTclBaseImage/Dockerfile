@@ -41,7 +41,7 @@ LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tr
 COPY --from=builder /usr/local /usr/local
 
 # Install necessary runtime dependencies and perform clean-up in a single RUN command
-RUN apk add --no-cache bash \
+RUN apk add --no-cache bash musl openssl zlib libpng \
     && rm -rf /var/cache/apk/*
 
 # Set the default command to execute when creating a new container

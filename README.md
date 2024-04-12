@@ -6,13 +6,13 @@ This repository contains a collection of Docker images designed for various purp
 
 ### AlpineTclBaseImage
 
-This image serves as a base image with Tcl and tcllib installed on Alpine Linux. It's optimized for size, making it an excellent choice for Tcl applications that require a minimal footprint. Size: 38.3 MB
+This image serves as a base image with Tcl and tcllib installed on Alpine Linux. It's optimized for size, making it an excellent choice for Tcl applications that require a minimal footprint. Size: 44.3 MB
 
 **Directory:** `AlpineTclBaseImage/`
 
 ### AlpineTclBatteriesIncluded
 
-This image also serves as a base image with Tcl, tcllib plus aditional packages installed on Alpine Linux. It's optimized for size, making it an excellent choice for Tcl applications that require a minimal footprint. Size: 48.6 MB
+This image also serves as a base image with Tcl, tcllib plus aditional packages installed on Alpine Linux. It's optimized for size, making it an excellent choice for Tcl applications that require a minimal footprint. Size: 54.2 MB
 
 **Directory:** `AlpineTclBatteriesIncluded/`
 

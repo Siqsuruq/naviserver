@@ -1,0 +1,27 @@
+proc lspackages {{pattern *}} {
+	# Force the package loader to do its thing:
+	# NOTE: this depends on a side effect of the
+	# built-in [package unknown].  Other [package unknown]
+	# handlers might not meet our expectations.
+	eval [package unknown] Tcl [package provide Tcl]
+	foreach package [lsort [package names]] {
+		if {![string match $pattern $package]} { continue }
+		foreach version [package versions $package] {
+			set present [expr {
+				[string compare $version [package provide $package]]
+			? " " : "+" }]
+			set ifneeded \
+			[string replace \
+			[string trim \
+			[string map {"\n" " " "\t" " "} \
+			[package ifneeded $package $version]]] \
+			50 end "..."]
+			puts [format "%1s%-15s %6s %-55s" \
+				$present $package $version $ifneeded]
+		}
+	}
+}
+
+# Display the version of Tcl on startup
+puts "Tcl version [info patchlevel] - batteries-included"
+puts "Run: lspackages to see list of packages."

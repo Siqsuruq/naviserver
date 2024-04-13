@@ -12,7 +12,7 @@ This image serves as a base image with Tcl and tcllib installed on Alpine Linux.
 
 ### AlpineTclBatteriesIncluded
 
-This image also serves as a base image with Tcl, tcllib plus aditional packages installed on Alpine Linux. It's optimized for size, making it an excellent choice for Tcl applications that require a minimal footprint. Size: 54.2 MB
+This image also serves as a base image with Tcl, tcllib plus aditional packages installed on Alpine Linux. It's optimized for size, making it an excellent choice for Tcl applications that require a minimal footprint. Size: 54.4 MB
 
 **Directory:** `AlpineTclBatteriesIncluded/`
 

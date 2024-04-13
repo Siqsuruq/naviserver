@@ -38,6 +38,13 @@ docker pull siqsuruq/tcl:tcl-alpine
 
 To run the image in interactive mode:
 
+Run into tclsh8.6 with rlwrap:
+
 ```bash
-docker run -it siqsuruq/tcl:tcl-alpine tclsh8.6
+docker run -it siqsuruq/tcl:tcl-alpine
+```
+Run into bash:
+
+```bash
+docker run -it siqsuruq/tcl:tclbi-alpine bash
 ```

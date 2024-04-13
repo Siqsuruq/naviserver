@@ -84,24 +84,28 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
 FROM alpine:latest
 
 # Metadata using OCI Image Format Specification annotations
-LABEL org.opencontainers.image.title="Alpine Tcl/Tcllib Image"
-LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, and Tcllib."
-LABEL org.opencontainers.image.version="0.1"
+LABEL org.opencontainers.image.title="Alpine Tcl batteries-included Image"
+LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, Tcllib and some Tcl packages."
+LABEL org.opencontainers.image.version="1.0"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.authors="admin@cloudz.cv"
 LABEL org.opencontainers.image.vendor="Cloudz"
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.url="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBaseImage"
-LABEL org.opencontainers.image.documentation="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBaseImage"
-LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBaseImage"
+LABEL org.opencontainers.image.url="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBatteriesIncluded"
+LABEL org.opencontainers.image.documentation="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBatteriesIncluded"
+LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBatteriesIncluded"
 
 # Copy built Tcl from the builder stage and install essential packages
 COPY --from=builder /usr/local /usr/local
 
 # Install necessary runtime dependencies and perform clean-up in a single RUN command
-# Instlling Tcl-tls because fossil version has broken build
-RUN apk add --no-cache bash musl libpq openssl zlib libpng curl \
+# Installing rlwrap and create an alias for tclsh
+RUN apk add --no-cache bash musl libpq openssl zlib libpng curl rlwrap \
+	&& echo 'alias tclsh="rlwrap tclsh8.6"' >> /etc/profile \
     && rm -rf /var/cache/apk/*
 
-# Set the default command to execute when creating a new container
-CMD ["bash"]
+# Copy the .tclshrc file into the home directory
+COPY .tclshrc /root/.tclshrc
+
+# This will run tclsh with rlwrap
+CMD ["rlwrap", "tclsh8.6"]

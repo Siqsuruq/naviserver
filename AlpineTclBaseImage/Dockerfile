@@ -28,7 +28,7 @@ FROM alpine:latest
 # Metadata using OCI Image Format Specification annotations
 LABEL org.opencontainers.image.title="Alpine Tcl/Tcllib Image"
 LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, and Tcllib."
-LABEL org.opencontainers.image.version="0.1"
+LABEL org.opencontainers.image.version="1.0"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.authors="admin@cloudz.cv"
 LABEL org.opencontainers.image.vendor="Cloudz"

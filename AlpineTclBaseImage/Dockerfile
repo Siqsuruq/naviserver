@@ -41,8 +41,12 @@ LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tr
 COPY --from=builder /usr/local /usr/local
 
 # Install necessary runtime dependencies and perform clean-up in a single RUN command
-RUN apk add --no-cache bash musl openssl zlib libpng \
+RUN apk add --no-cache bash musl openssl zlib libpng rlwrap \
+	&& echo 'alias tclsh="rlwrap tclsh8.6"' >> /etc/profile \
     && rm -rf /var/cache/apk/*
 
+# Copy the .tclshrc file into the home directory
+COPY .tclshrc /root/.tclshrc
+
 # Set the default command to execute when creating a new container
-CMD ["bash"]
+CMD ["rlwrap", "tclsh8.6"]

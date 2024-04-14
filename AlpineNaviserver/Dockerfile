@@ -48,19 +48,21 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
     && rm -rf ${TCL_BUILD_HOME} tcl.zip /var/cache/apk/*
 
 # Stage 2: Final Image
-FROM alpine:latest
+FROM siqsuruq/tcl:tclbi-alpine
+
+ARG NS_HOME=/opt/ns
 
 # Metadata using OCI Image Format Specification annotations
-LABEL org.opencontainers.image.title="Alpine Tcl/Tcllib Image"
-LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, and Tcllib."
-LABEL org.opencontainers.image.version="0.1"
+LABEL org.opencontainers.image.title="Alpine Naviserver Image"
+LABEL org.opencontainers.image.description="A custom Docker image Naviserver."
+LABEL org.opencontainers.image.version="1.0.0"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.authors="admin@cloudz.cv"
 LABEL org.opencontainers.image.vendor="Cloudz"
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.url="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBaseImage"
-LABEL org.opencontainers.image.documentation="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBaseImage"
-LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tree/main/AlpineTclBaseImage"
+LABEL org.opencontainers.image.url="https://github.com/Siqsuruq/naviserver/tree/main/AlpineNaviserver"
+LABEL org.opencontainers.image.documentation="https://github.com/Siqsuruq/naviserver/tree/main/AlpineNaviserver"
+LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tree/main/AlpineNaviserver"
 
 # Copy built Tcl from the builder stage and install essential packages
 COPY --from=builder /usr/local /usr/local
@@ -68,7 +70,15 @@ COPY --from=builder /opt/ns /opt/ns
 # Install necessary runtime dependencies and perform clean-up in a single RUN command
 # Instlling Tcl-tls because fossil version has broken build
 RUN apk add --no-cache bash musl libpq openssl zlib libpng curl \
+	# Add user 'nsadmin' with no login shell
+	&& addgroup -S nsadmin && adduser -S nsadmin -g nsadmin -s /sbin/nologin \
+	&& chown -R nsadmin:nsadmin ${NS_HOME} \
     && rm -rf /var/cache/apk/*
 
-# Set the default command to execute when creating a new container
-CMD ["bash"]
+ADD ./ns-config.tcl ${NS_HOME}/conf/
+
+VOLUME ${NS_HOME}/logs
+WORKDIR $NS_HOME
+EXPOSE 80 443
+
+ENTRYPOINT /opt/ns/bin/nsd -u nsadmin -t /opt/ns/conf/ns-config.tcl -f

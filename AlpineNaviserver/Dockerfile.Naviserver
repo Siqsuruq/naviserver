@@ -1,0 +1,51 @@
+# Base Alpine Image with Tcl and Tcllib
+# Stage 1: Builder
+FROM siqsuruq/tcl:tclbi-alpine AS builder
+
+ARG NS_HOME=/opt/ns
+ARG 
+
+
+# Install dependencies, download and install Tcl, and clean up in a single RUN command to reduce layers
+RUN apk add --no-cache bash gcc musl-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip git libpng-dev automake \
+	&& git clone https://github.com/naviserver-project/naviserver.git ${NS_BUILD_HOME}/src/naviserver \
+ 	&& cd ${NS_BUILD_HOME}/src/naviserver \
+	&& ./autogen.sh --prefix=$NS_HOME --enable-threads --enable-64bit \
+	&& make && make install \
+    && cd / \
+    && rm -rf ${NS_BUILD_HOME} /var/cache/apk/*
+
+# Stage 2: Final Image
+FROM siqsuruq/tcl:tclbi-alpine
+
+ARG NS_HOME=/opt/ns
+
+# Metadata using OCI Image Format Specification annotations
+LABEL org.opencontainers.image.title="Alpine Naviserver Image"
+LABEL org.opencontainers.image.description="A custom Docker image Naviserver."
+LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.created=${BUILD_DATE}
+LABEL org.opencontainers.image.authors="admin@cloudz.cv"
+LABEL org.opencontainers.image.vendor="Cloudz"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.url="https://github.com/Siqsuruq/naviserver/tree/main/AlpineNaviserver"
+LABEL org.opencontainers.image.documentation="https://github.com/Siqsuruq/naviserver/tree/main/AlpineNaviserver"
+LABEL org.opencontainers.image.source="https://github.com/Siqsuruq/naviserver/tree/main/AlpineNaviserver"
+
+# Copy built Tcl from the builder stage and install essential packages
+COPY --from=builder /opt/ns /opt/ns
+# Install necessary runtime dependencies and perform clean-up in a single RUN command
+# Instlling Tcl-tls because fossil version has broken build
+RUN apk add --no-cache bash musl openssl zlib libpng \
+	# Add user 'nsadmin' with no login shell
+	&& addgroup -S nsadmin && adduser -S nsadmin -g nsadmin -s /sbin/nologin \
+	&& chown -R nsadmin:nsadmin ${NS_HOME} \
+    && rm -rf /var/cache/apk/*
+
+ADD ./ns-config.tcl ${NS_HOME}/conf/
+
+VOLUME ${NS_HOME}/logs
+WORKDIR $NS_HOME
+EXPOSE 80 443
+
+ENTRYPOINT /opt/ns/bin/nsd -u nsadmin -t /opt/ns/conf/ns-config.tcl -f

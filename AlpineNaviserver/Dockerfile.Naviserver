@@ -38,7 +38,8 @@ COPY --from=builder /opt/ns /opt/ns
 # Instlling Tcl-tls because fossil version has broken build
 RUN apk add --no-cache bash musl openssl zlib libpng \
 	# Add user 'nsadmin' with no login shell
-	&& addgroup -S nsadmin && adduser -S nsadmin -g nsadmin -s /sbin/nologin \
+	&& addgroup -g 1000 nsadmin \
+    && adduser -u 1000 -G nsadmin -s /sbin/nologin -D nsadmin \
 	&& chown -R nsadmin:nsadmin ${NS_HOME} \
     && rm -rf /var/cache/apk/*
 

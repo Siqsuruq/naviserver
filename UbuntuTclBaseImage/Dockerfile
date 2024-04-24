@@ -1,83 +1,104 @@
+# Base Ubuntu Image with Tcl and Tcllib
 # Stage 1: Build Stage
-FROM ubuntu:jammy AS builder
+FROM ubuntu:latest AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TCL_BUILD_HOME=/opt/tcl_build
-ARG PG_INCL=/usr/include/postgresql
-ARG PG_LIB=/usr/lib
-ARG TCL_LIB=/usr/share/tcltk
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 # Install build dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli libxml2-utils curl ca-certificates gnupg2 lsb-release xz-utils \
-	&& locale-gen C.UTF-8 \
-	&& update-locale LANG=C.UTF-8 \
+    && apt-get install -y --no-install-recommends wget unzip build-essential ca-certificates zlib1g-dev libpq-dev libpng-dev libcurl4-openssl-dev automake git \
 	&& apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-    && git config --global http.sslverify false \
-    && git config --global https.sslverify false \
-    && git clone https://github.com/flightaware/Pgtcl.git ${TCL_BUILD_HOME}/src/pgtcl \
-    && cd ${TCL_BUILD_HOME}/src/pgtcl \
-    && autoreconf \
-    && ./configure --with-postgres-include=$PG_INCL --with-postgres-lib=$PG_LIB && make \
-    && git clone https://github.com/flightaware/tclcurl-fa.git ${TCL_BUILD_HOME}/src/tclcurl \
-    && cd ${TCL_BUILD_HOME}/src/tclcurl \
-    && ./configure --enable-threads && make \
+	&& wget https://sourceforge.net/projects/tcl/files/Tcl/8.6.14/tcl8614-src.zip -O tcl.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/tcl \
+    && unzip tcl.zip -d ${TCL_BUILD_HOME}/tcl \
+    && cd ${TCL_BUILD_HOME}/tcl/tcl8.6.14/unix \
+    && ./configure --enable-64bit --enable-threads \
+    && make \
+    && make install \
+	&& wget https://github.com/tcltk/tcllib/archive/refs/tags/tcllib-1-21.zip -O tcllib-1-21.zip \
+    && mkdir -p ${TCL_BUILD_HOME}/tcllib \
+    && unzip tcllib-1-21.zip -d ${TCL_BUILD_HOME}/tcllib \
+    && cd ${TCL_BUILD_HOME}/tcllib/tcllib-tcllib-1-21/ \
+    && ./configure && make install \
+	&& wget tdom.org/index.html/zip/trunk/tdom-trunk.zip -O tdom-trunk.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/tdom \
+    && unzip tdom-trunk.zip -d ${TCL_BUILD_HOME}/tdom \
+    && cd ${TCL_BUILD_HOME}/tdom/tdom-trunk/ \
+	&& ./configure \
+	&& make install \
+	&& wget https://github.com/flightaware/Pgtcl/archive/refs/tags/v3.0.1.zip -O pgtcl.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/pgtcl \
+    && unzip pgtcl.zip -d ${TCL_BUILD_HOME}/pgtcl \
+    && cd ${TCL_BUILD_HOME}/pgtcl/Pgtcl-3.0.1/ \
+	&& autoreconf \
+    && ./configure && make \
+	&& make install \
+	&& wget https://github.com/flightaware/tclcurl-fa/archive/refs/tags/v7.22.0.zip -O v7.22.0.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/tclcurl \
+    && unzip v7.22.0.zip -d ${TCL_BUILD_HOME}/tclcurl \
+    && cd ${TCL_BUILD_HOME}/tclcurl/tclcurl-fa-7.22.0/ \
+    && ./configure --enable-64bit && make \
+	&& make install \
+	&& wget https://core.tcl-lang.org/tcltls/zip/89a6207a57/tcltls-89a6207a57.zip -O tcltls-1.8.0.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/tcltls \
+	&& unzip tcltls-1.8.0.zip -d ${TCL_BUILD_HOME}/tcltls \
+    && cd ${TCL_BUILD_HOME}/tcltls/tcltls-89a6207a57/ \
+    && ./configure  --enable-64bit && make \
+	&& make install-binaries install-libraries \
+	&& wget https://github.com/nm-wu/nsf/archive/refs/tags/2.4.0.zip -O nsf.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/nsf \
+    && unzip nsf.zip -d ${TCL_BUILD_HOME}/nsf \
+    && cd ${TCL_BUILD_HOME}/nsf/nsf-2.4.0/ \
+    && ./configure --enable-64bit --enable-threads && make \
+	&& make install \
 	&& git clone https://github.com/aschoepe/tzint.git ${TCL_BUILD_HOME}/src/tzint \
  	&& cd ${TCL_BUILD_HOME}/src/tzint \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libpng.so /usr/lib/libpng.so \
-	&& ./configure && make \
-	&& wget --no-check-certificate https://core.tcl-lang.org/tclvfs/zip/72e30db4a7/tclvfs-72e30db4a7.zip -P ${TCL_BUILD_HOME}/src/vfs/ \
-	&& unzip ${TCL_BUILD_HOME}/src/vfs/tclvfs-72e30db4a7.zip -d ${TCL_BUILD_HOME}/src/vfs/ \
+	&& ./configure --with-png-lib=/usr/lib/x86_64-linux-gnu/ --enable-64bit && make \
+	&& make install-binaries install-libraries \
+	&& wget --no-check-certificate https://core.tcl-lang.org/tclvfs/zip/72e30db4a7/tclvfs-72e30db4a7.zip -O tclvfs-72e30db4a7.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/src/vfs/ \
+	&& unzip tclvfs-72e30db4a7.zip -d ${TCL_BUILD_HOME}/src/vfs \
 	&& mv ${TCL_BUILD_HOME}/src/vfs/tclvfs-72e30db4a7/* ${TCL_BUILD_HOME}/src/vfs/ \
 	&& wget --no-check-certificate https://core.tcl-lang.org/tclconfig/zip/2a8174cc0c/TEA+%28tclconfig%29+Source+Code-2a8174cc0c.zip -P ${TCL_BUILD_HOME}/src/vfs/ -O ${TCL_BUILD_HOME}/src/vfs/tclconfig.zip \
 	&& unzip ${TCL_BUILD_HOME}/src/vfs/tclconfig.zip -d ${TCL_BUILD_HOME}/src/vfs/tclconfig \
 	&& mv ${TCL_BUILD_HOME}/src/vfs/tclconfig/TEA*/* ${TCL_BUILD_HOME}/src/vfs/tclconfig/ \
 	&& cd ${TCL_BUILD_HOME}/src/vfs \
-	&& autoconf && ./configure && make \
+	&& ./configure && make && make install \
 	&& git clone https://github.com/aschoepe/ooxml.git ${TCL_BUILD_HOME}/src/ooxml \
  	&& cd ${TCL_BUILD_HOME}/src/ooxml \
-	&& ./configure && make \
+	&& ./configure && make && make install \
 	&& git clone https://github.com/Siqsuruq/money-tcl-package.git ${TCL_BUILD_HOME}/src/money \
+	&& cp -r ${TCL_BUILD_HOME}/src/money/money $TCL_LIB/ \
 	&& git clone https://github.com/Siqsuruq/mimext.git ${TCL_BUILD_HOME}/src/mimext \
-	&& git clone https://github.com/Siqsuruq/hrfilesize.git ${TCL_BUILD_HOME}/src/hrfilesize
-
-
+	&& cp -r ${TCL_BUILD_HOME}/src/mimext $TCL_LIB/ \
+	&& git clone https://github.com/Siqsuruq/hrfilesize.git ${TCL_BUILD_HOME}/src/hrfilesize \
+	&& cp -r ${TCL_BUILD_HOME}/src/hrfilesize $TCL_LIB/ \
+	&& wget https://github.com/Kazmirchuk/nats-tcl/archive/refs/tags/v3.0.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/nats \
+	&& unzip v3.0.zip -d ${TCL_BUILD_HOME}/nats \
+	&& cp -r ${TCL_BUILD_HOME}/nats/nats-tcl-3.0 $TCL_LIB/ 
+	
 # Stage 2: Final Image
-FROM ubuntu:jammy
+FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG TCL_BUILD_HOME=/opt/tcl_build
-ARG PG_INCL=/usr/include/postgresql
-ARG PG_LIB=/usr/lib
-ARG TCL_LIB=/usr/share/tcltk
 ARG WORKDIR=/opt/tcltk
-ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-# Copy built Tcl packages from the builder stage
-COPY --from=builder ${TCL_BUILD_HOME} ${TCL_BUILD_HOME}
+# Copy built Tcl from the builder stage and install essential packages
+COPY --from=builder /usr/local /usr/local
 
 # Install runtime dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev nsf nsf-shells fortune fortunes imagemagick file zip libcurl4-openssl-dev brotli libxml2-utils gnupg2 make \
-	&& locale-gen C.UTF-8 \
-	&& update-locale LANG=C.UTF-8 \
+    && apt-get install -y --no-install-recommends bash openssl curl rlwrap \
 	&& apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* 
-
-# Run make install for each package
-RUN cd ${TCL_BUILD_HOME}/src/pgtcl && make install \
-    && cd ${TCL_BUILD_HOME}/src/tclcurl && make install \
-	&& ln -s /usr/lib/x86_64-linux-gnu/libpng.so /usr/lib/libpng.so \
-	&& cd ${TCL_BUILD_HOME}/src/tzint && make install \
-	&& cd ${TCL_BUILD_HOME}/src/vfs && make install \
-	&& cd ${TCL_BUILD_HOME}/src/ooxml && make install \
-	&& cp -r ${TCL_BUILD_HOME}/src/money/money $TCL_LIB/ \
-	&& cp -r ${TCL_BUILD_HOME}/src/mimext $TCL_LIB/ \
-	&& cp -r ${TCL_BUILD_HOME}/src/hrfilesize $TCL_LIB/ 
-	
 
 # Cleanup
 RUN rm -rf ${TCL_BUILD_HOME}/src
@@ -85,5 +106,8 @@ RUN rm -rf ${TCL_BUILD_HOME}/src
 # Set working directory
 WORKDIR ${WORKDIR}
 
+# Copy the .tclshrc file into the home directory
+COPY .tclshrc /root/.tclshrc
+
 # Entrypoint
-ENTRYPOINT ["tclsh"]
+CMD ["rlwrap", "tclsh8.6"]

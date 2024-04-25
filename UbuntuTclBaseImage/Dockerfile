@@ -5,7 +5,7 @@ FROM ubuntu:latest AS builder
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TCL_BUILD_HOME=/opt/tcl_build
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-
+ENV TCL_LIB=/usr/local/lib
 # Install build dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends wget unzip build-essential ca-certificates zlib1g-dev libpq-dev libpng-dev libcurl4-openssl-dev automake git \
@@ -95,7 +95,7 @@ COPY --from=builder /usr/local /usr/local
 
 # Install runtime dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends bash openssl curl rlwrap \
+    && apt-get install -y --no-install-recommends bash openssl curl libpq5 rlwrap \
 	&& apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* 

@@ -2,10 +2,10 @@
 
 This Docker image provides a lightweight, Alpine-based environment equipped with Tcl (Tool Command Language) and Tcllib, offering a robust platform for developing and running Tcl applications. Ideal for Tcl enthusiasts and developers looking for a minimal yet fully-functional Tcl execution environment, this image is optimized for performance, size, and ease of use. Whether you're developing applications, scripts, or just exploring Tcl, siqsuruq/tcl is the perfect starting point."
 
-- tcl 8.6.14 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
+- tcl 8.6.15 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
 - tcllib 1.21 [list of packages included](https://core.tcl-lang.org/tcllib/doc/tcllib-1-21/embedded/md/toc.md)
 
-Size of this image is around: 38.3 MB
+Size of this image is around: 39.9 MB
 
 ### Prerequisites
 

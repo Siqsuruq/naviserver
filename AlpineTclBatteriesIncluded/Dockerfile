@@ -7,10 +7,10 @@ ARG TCL_LIB=/usr/local/lib
 
 # Install dependencies, download and install Tcl, and clean up in a single RUN command to reduce layers
 RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-base zlib-dev autoconf tar gzip git libpng-dev curl curl-dev \
-    && wget https://sourceforge.net/projects/tcl/files/Tcl/8.6.14/tcl8614-src.zip -O tcl.zip \
+    && wget https://sourceforge.net/projects/tcl/files/Tcl/8.6.15/tcl8615-src.zip -O tcl.zip \
     && mkdir -p ${TCL_BUILD_HOME}/tcl \
     && unzip tcl.zip -d ${TCL_BUILD_HOME}/tcl \
-    && cd ${TCL_BUILD_HOME}/tcl/tcl8.6.14/unix \
+    && cd ${TCL_BUILD_HOME}/tcl/tcl8.6.15/unix \
     && ./configure --enable-64bit --enable-threads \
     && make \
     && make install \
@@ -86,7 +86,7 @@ FROM alpine:latest
 # Metadata using OCI Image Format Specification annotations
 LABEL org.opencontainers.image.title="Alpine Tcl batteries-included Image"
 LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, Tcllib and some Tcl packages."
-LABEL org.opencontainers.image.version="1.0"
+LABEL org.opencontainers.image.version="1.1"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.authors="admin@cloudz.cv"
 LABEL org.opencontainers.image.vendor="Cloudz"

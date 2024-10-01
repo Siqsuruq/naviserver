@@ -4,7 +4,7 @@ This Docker image provides a lightweight, Alpine-based environment equipped with
 
 At this point image brings:
 
-- tcl 8.6.14 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
+- tcl 8.6.15 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
 - tcllib 1.21 [list of packages included](https://core.tcl-lang.org/tcllib/doc/tcllib-1-21/embedded/md/toc.md)
 - tdom 0.9.3
 - Pgtcl 3.0.1
@@ -15,7 +15,7 @@ At this point image brings:
 - vfs 1.4.2
 - ooxml 1.6.1
 - money 1.0.1
-- mimext 1.0.0
+- mimext 1.1.0
 - hrfilesize 1.0.0
 - nats 3.0
 

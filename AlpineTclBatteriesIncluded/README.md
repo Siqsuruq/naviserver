@@ -4,16 +4,16 @@ This Docker image provides a lightweight, Alpine-based environment equipped with
 
 At this point image brings:
 
-- tcl 8.6.15 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
-- tcllib 1.21 [list of packages included](https://core.tcl-lang.org/tcllib/doc/tcllib-1-21/embedded/md/toc.md)
-- tdom 0.9.3
-- Pgtcl 3.0.1
+- tcl 8.6.16 [official documentation](https://www.tcl-lang.org/man/tcl8.6/)
+- tcllib 2.0 [list of packages included](https://core.tcl-lang.org/tcllib/doc/tcllib-2-0/embedded/md/toc.md)
+- tdom 0.9.5
+- Pgtcl 3.1.0
 - tls 1.8.0
 - nsf 2.4.0
 - tzint 1.1.0
 - TclCurl 7.22.0
 - vfs 1.4.2
-- ooxml 1.6.1
+- ooxml 1.9.0
 - money 1.0.1
 - mimext 1.1.0
 - hrfilesize 1.0.0

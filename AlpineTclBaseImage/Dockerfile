@@ -25,6 +25,9 @@ RUN apk add --no-cache bash gcc musl-dev openssl openssl-dev build-base zlib-dev
 # Stage 2: Final Image
 FROM alpine:latest
 
+# Declare BUILD_DATE as an argument
+ARG BUILD_DATE
+
 # Metadata using OCI Image Format Specification annotations
 LABEL org.opencontainers.image.title="Alpine Tcl/Tcllib Image"
 LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, and Tcllib."

@@ -7,10 +7,12 @@ ARG NS_BUILD_HOME=/opt/ns_build
 ARG PG_INCL=/usr/include/postgresql
 ARG PG_LIB=/usr/lib
 ARG TCL_LIB=/usr/share/tcltk
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV TCL_LIB=/usr/local/lib
 
 # Install build dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales unzip automake git gcc zip wget lsb-release xz-utils openssl \
+    && apt-get install -y --no-install-recommends locales unzip automake git gcc zip wget lsb-release xz-utils openssl build-essential zlib1g-dev libssl-dev libpq-dev  \
     && locale-gen C.UTF-8 \
     && update-locale LANG=C.UTF-8 \
     && apt-get clean \
@@ -21,51 +23,7 @@ RUN apt-get update \
 	# Compile and install Naviserver
 	&& git clone https://github.com/naviserver-project/naviserver.git ${NS_BUILD_HOME}/src/naviserver \
  	&& cd ${NS_BUILD_HOME}/src/naviserver \
-	&& ./autogen.sh --prefix=$NS_HOME --enable-symbols --enable-threads && make
-	
-	
-	
-# Stage 2: Create a temporary image to run 'make install'
-FROM ubuntu:jammy AS naviserver-installer
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG NS_HOME=/opt/ns
-ARG NS_BUILD_HOME=/opt/ns_build
-ARG PG_INCL=/usr/include/postgresql
-ARG PG_LIB=/usr/lib
-ARG TCL_LIB=/usr/share/tcltk
-
-COPY --from=naviserver-builder ${NS_BUILD_HOME} ${NS_BUILD_HOME}
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales make \
-    && locale-gen C.UTF-8 \
-    && update-locale LANG=C.UTF-8 \
-    && apt-get clean \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-	&& cd ${NS_BUILD_HOME}/src/naviserver \
-	&& make install
-	
-	
-# Stage 3: Build the an image to install additional modules
-FROM ubuntu:jammy AS module-installer
-ARG DEBIAN_FRONTEND=noninteractive
-ARG NS_HOME=/opt/ns
-ARG NS_BUILD_HOME=/opt/ns_build
-ARG PG_INCL=/usr/include/postgresql
-ARG PG_LIB=/usr/lib
-ARG TCL_LIB=/usr/share/tcltk
-
-COPY --from=naviserver-installer ${NS_HOME} ${NS_HOME}
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales unzip tcl tcl-dev tcllib tdom tcl-tls tcl-thread libssl-dev libpng-dev libpq-dev automake nsf nsf-shells fortune fortunes imagemagick file git gcc zip libcurl4-openssl-dev wget iputils-ping brotli libxml2-utils curl ca-certificates gnupg2 lsb-release xz-utils make \
-    && locale-gen C.UTF-8 \
-    && update-locale LANG=C.UTF-8 \
-    && apt-get clean \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-	&& git config --global http.sslverify false \
-    && git config --global https.sslverify false \
+	&& ./autogen.sh --prefix=$NS_HOME --enable-threads --enable-64bit && make && make install \
 	# Compile and install NS_DBPG
 	&& git clone https://github.com/naviserver-project/nsdbpg.git ${NS_BUILD_HOME}/src/nsdbpg \
  	&& cd ${NS_BUILD_HOME}/src/nsdbpg \
@@ -95,29 +53,22 @@ RUN apt-get update \
  	&& cd ${NS_BUILD_HOME}/src/nsstats \
 	&& make NAVISERVER=$NS_HOME && make NAVISERVER=$NS_HOME install \
 	&& rm -rf ${NS_BUILD_HOME}/src
+	
+
 
 # Stage 2: Final Image
 FROM siqsuruq/ubuntu-tcl
 
-LABEL maintainer="admin@cloudz.cv"
-LABEL version="0.3"
-LABEL description="This is custom Docker Image for Naviserver"
-
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NS_HOME=/opt/ns
-ARG NS_BUILD_HOME=/opt/ns_build
-ARG PG_INCL=/usr/include/postgresql
-ARG PG_LIB=/usr/lib
 ARG TCL_LIB=/usr/share/tcltk
-ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-COPY --from=module-installer ${NS_HOME} ${NS_HOME}
+COPY --from=naviserver-builder ${NS_HOME} ${NS_HOME}
 
 # Compile and install NS
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends locales \
-    && locale-gen C.UTF-8 \
-    && update-locale LANG=C.UTF-8 \
+    && apt-get install -y --no-install-recommends fortune imagemagick brotli libxml2 \
     && apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \

@@ -6,10 +6,10 @@ ARG TCL_BUILD_HOME=/opt/tcl_build
 
 # Install dependencies, download and install Tcl, and clean up in a single RUN command to reduce layers
 RUN apk add --no-cache bash gcc musl-dev openssl openssl-dev build-base zlib-dev \
-    && wget https://sourceforge.net/projects/tcl/files/Tcl/9.0.1/tcl901-src.zip -O tcl.zip \
+    && wget https://sourceforge.net/projects/tcl/files/Tcl/8.6.16/tcl8616-src.zip -O tcl.zip \
     && mkdir -p ${TCL_BUILD_HOME}/tcl \
     && unzip tcl.zip -d ${TCL_BUILD_HOME}/tcl \
-    && cd ${TCL_BUILD_HOME}/tcl/tcl9.0.1/unix \
+    && cd ${TCL_BUILD_HOME}/tcl/tcl8.6.16/unix \
     && ./configure --enable-64bit --enable-threads \
     && make \
     && make install \

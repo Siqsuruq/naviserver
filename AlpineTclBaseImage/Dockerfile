@@ -49,4 +49,4 @@ RUN apk add --no-cache bash musl openssl zlib libpng rlwrap \
 COPY .tclshrc /root/.tclshrc
 
 # Set the default command to execute when creating a new container
-CMD ["rlwrap", "tclsh9.0"]
+CMD ["rlwrap", "tclsh8.6"]

@@ -14,10 +14,10 @@ At this point image brings:
 - TclCurl 7.22.0
 - vfs 1.4.2
 - ooxml 1.9.0
-- money 1.0.1
+- money 1.0.2
 - mimext 1.1.0
 - hrfilesize 1.0.0
-- nats 3.0
+- nats 3.1
 
 ### Prerequisites
 

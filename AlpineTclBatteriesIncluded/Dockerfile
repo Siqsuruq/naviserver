@@ -68,16 +68,18 @@ RUN apk add --no-cache bash gcc musl-dev libpq-dev openssl openssl-dev build-bas
 	&& mkdir -p ${TCL_BUILD_HOME}/src/ooxml/ \
 	&& unzip ooxml1.9.zip -d ${TCL_BUILD_HOME}/src/ooxml \
 	&& cp -r ${TCL_BUILD_HOME}/src/ooxml/ooxml1.9 $TCL_LIB/ \
-	&& git clone https://github.com/Siqsuruq/money-tcl-package.git ${TCL_BUILD_HOME}/src/money \
-	&& cp -r ${TCL_BUILD_HOME}/src/money/money $TCL_LIB/ \
+	&& wget https://github.com/Siqsuruq/money-tcl-package/releases/download/v1.0.2/money-1.0.2.zip \
+	&& mkdir -p ${TCL_BUILD_HOME}/money \
+	&& unzip money-1.0.2.zip -d ${TCL_BUILD_HOME}/money \
+	&& cp -r ${TCL_BUILD_HOME}/money/money $TCL_LIB/ \
 	&& git clone https://github.com/Siqsuruq/mimext.git ${TCL_BUILD_HOME}/src/mimext \
 	&& cp -r ${TCL_BUILD_HOME}/src/mimext $TCL_LIB/ \
 	&& git clone https://github.com/Siqsuruq/hrfilesize.git ${TCL_BUILD_HOME}/src/hrfilesize \
 	&& cp -r ${TCL_BUILD_HOME}/src/hrfilesize $TCL_LIB/ \
-	&& wget https://github.com/Kazmirchuk/nats-tcl/archive/refs/tags/v3.0.zip \
+	&& wget https://github.com/Kazmirchuk/nats-tcl/archive/refs/tags/v3.1.zip \
 	&& mkdir -p ${TCL_BUILD_HOME}/nats \
-	&& unzip v3.0.zip -d ${TCL_BUILD_HOME}/nats \
-	&& cp -r ${TCL_BUILD_HOME}/nats/nats-tcl-3.0 $TCL_LIB/ \
+	&& unzip v3.1.zip -d ${TCL_BUILD_HOME}/nats \
+	&& cp -r ${TCL_BUILD_HOME}/nats/nats-tcl-3.1 $TCL_LIB/ \
     && cd / \
     && rm -rf ${TCL_BUILD_HOME} tcl.zip /var/cache/apk/*
 
@@ -90,7 +92,7 @@ ARG BUILD_DATE
 # Metadata using OCI Image Format Specification annotations
 LABEL org.opencontainers.image.title="Alpine Tcl batteries-included Image"
 LABEL org.opencontainers.image.description="A custom Docker image with Alpine, Tcl, Tcllib and some Tcl packages."
-LABEL org.opencontainers.image.version="1.2"
+LABEL org.opencontainers.image.version="1.3"
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.authors="admin@cloudz.cv"
 LABEL org.opencontainers.image.vendor="Cloudz"
